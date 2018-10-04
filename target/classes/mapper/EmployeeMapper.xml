@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.EmployeeDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，这里的接口是"cn.tedu.cloud_note.dao.UserDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+
+	<!-- 指定插入语句 -->
+	<!-- insert和update语句不能指定resultType属性，否则报错 -->
+	<!-- 添加属性，将数据库自动创建的主键值放入实体类中的成员变量中，以获取主键的值 -->
+	<!-- ■ useGeneratedKeys="true"表示使用了数据库自动生成的主键 -->
+	<!-- ■ keyProperty="id"表示将数据库自动生成的主键复制到名称为id的成员变量中 -->
+	<insert 
+		id="save" 
+		parameterType="cn.tedu.cloud_note.entity.Employee"
+		useGeneratedKeys="true" 
+		keyProperty="id">        
+		<!-- 由于主键id是自增序列，是由数据库自动生成的，因此在这里不需要指定 -->
+		INSERT 
+		        INTO employees(
+		        	name,
+		        	age)
+		        VALUES(
+		                #{name},
+		                #{age})
+	</insert>
+
+</mapper>

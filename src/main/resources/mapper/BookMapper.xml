@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.BookDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，这里的接口是"cn.tedu.cloud_note.dao.UserDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+	<!-- 指定查询语句 -->
+	<!-- id要求唯一，resultType指定结果类型，这里也是entity包下的Emp类 -->
+	<select id="findByUserId" parameterType="String" resultType="cn.tedu.cloud_note.entity.Book">
+		SELECT * FROM cn_notebook WHERE cn_user_id=#{userId} order by cn_notebook_createtime desc
+		<!-- 【order by 某字段 desc】表示根据该字段倒叙排序 -->
+	</select>
+	
+	<!-- 指定插入语句 -->
+	<!-- insert和update语句不能指定resultType属性，否则报错 -->
+	<insert id="addBook" parameterType="cn.tedu.cloud_note.entity.Book">
+		INSERT 
+		        INTO cn_notebook(
+		                cn_notebook_id,
+		                cn_user_id,
+		                cn_notebook_type_id,
+		                cn_notebook_name,
+		                cn_notebook_desc,
+		                cn_notebook_createtime)
+		        VALUES(
+		                #{cn_notebook_id},
+		                #{cn_user_id},
+		                #{cn_notebook_type_id},
+		                #{cn_notebook_name},
+		                #{cn_notebook_desc},
+		                #{cn_notebook_createtime})
+	</insert>
+
+</mapper>

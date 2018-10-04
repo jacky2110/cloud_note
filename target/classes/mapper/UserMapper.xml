@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.UserDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，这里的接口是"cn.tedu.cloud_note.dao.UserDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+
+	<!-- 指定查询语句 -->
+	<!-- id要求唯一，resultType指定结果类型，这里也是entity包下的Emp类 -->
+	<select id="findByName" parameterType="String" resultType="cn.tedu.cloud_note.entity.User">
+		SELECT * FROM cn_user WHERE cn_user_name=#{name}
+	</select>
+	
+	<!-- 指定插入语句 -->
+	<insert id="save" parameterType="cn.tedu.cloud_note.entity.User">
+		INSERT INTO cn_user(
+				cn_user_id,
+				cn_user_name,
+				cn_user_password,
+				cn_user_nick,
+				cn_user_token) 
+			VALUES(
+				#{cn_user_id},
+				#{cn_user_name},
+				#{cn_user_password},
+				#{cn_user_nick},
+				#{cn_user_token})
+	</insert>
+
+</mapper>

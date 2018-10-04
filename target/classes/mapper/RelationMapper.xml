@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.RelationDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，这里的接口是"cn.tedu.cloud_note.dao.RelationDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+
+	<!-- 使用2条SQL语句进行关联查询 -->
+	<!-- 指定查询语句 -->
+	<!-- id要求唯一，resultType指定结果类型，这里也是entity包下的Emp类 -->
+	<!-- 由于为了进行关联查询，在User类中添加了一个books属性，而在数据库表中没有这个字段，因此不能通过resultType直接指定返回结果为User类 -->
+	<!-- 而应该使用resultMap属性，通过id，指定一个resultMap元素 -->
+	<!-- <select id="findUserAndBooks" parameterType="String" resultType="cn.tedu.cloud_note.entity.User"> -->
+	<select id="findUserAndBooks" parameterType="String" resultMap="userMap">
+		SELECT * FROM cn_user WHERE cn_user_id=#{userId}
+	</select>
+	
+	
+	<!-- 使用ResultMap解决标的字段名与实体类的属性名不一致的情况 -->
+	<!-- 	■ 属性type：执行实体类（这里为entity包下的Emp2） -->
+	<!-- 	■ 属性id：指定一个唯一的id -->
+	<resultMap id="userMap" type="cn.tedu.cloud_note.entity.User">
+		<!-- 为【实体类的成员变量名】和【数据库表中的字段名】指定对应关系。注：两者相同的不需要列举 -->
+		<!-- <id>和<result>元素都可用来列举对应关系，区别是<id>元素用作整个结果的唯一标识，可以使用数据库表中的主键 -->
+		<!-- <result>元素用来列举其他字段的对应关系 -->
+		<!-- property指定实体类的成员变量名，column指定数据库表中的字段名 -->
+		
+		<id property="cn_user_id" column="cn_user_id"/>
+		<result property="cn_user_name" column="cn_user_name"/>
+		
+		<!-- 指定books属性，该属性是一个List集合 -->
+		<!-- 	■ 属性property：指定实体类的成员变量名这里为books -->
+		<!-- 	■ 属性javaType：指定该成员变量的类型 -->
+		<!-- 	■ 属性ofType：指定泛型的具体类型，例如List<T>中的T是什么类型 -->
+		<!-- 	■ 属性select：指定该成员变量将装载的是哪条语句的查询结果 -->
+		<!-- 	■ 属性column： -->
+		<collection property="books" 
+			    javaType="java.util.List" 
+			    ofType="cn.tedu.cloud_note.entity.Book" 
+			    select="findBooks"
+			    column="cn_user_id">
+		</collection>
+	</resultMap>
+	
+	<select id="findBooks" parameterType="String" resultType="cn.tedu.cloud_note.entity.Book">
+		SELECT * FROM cn_notebook WHERE cn_user_id=#{userId}
+	</select>
+	
+	
+	
+	
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.NoteDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，例如"cn.tedu.cloud_note.dao.NoteDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+	<!-- 指定查询语句 -->
+	<!-- <select id="findByBookId" parameterType="String" resultType="cn.tedu.cloud_note.entity.Book"> -->
+	<select id="findByBookId" parameterType="String" resultType="Map">
+		SELECT cn_note_id,cn_note_title FROM cn_note WHERE cn_notebook_id=#{bookId} AND cn_note_status_id='1'
+	</select>
+	
+	<!-- 指定查询语句 -->
+	<select id="findByNoteId" parameterType="String" resultType="cn.tedu.cloud_note.entity.Note">
+		SELECT * FROM cn_note WHERE cn_note_id=#{noteId}
+	</select>
+	
+	<!-- 指定更新语句 -->
+	<!-- insert和update语句不能指定resultType属性，否则报错 -->
+	<update id="updateNote" parameterType="cn.tedu.cloud_note.entity.Note">
+		UPDATE cn_note 
+			SET 
+				cn_note_title=#{cn_note_title},
+				cn_note_body=#{cn_note_body},
+				cn_note_last_modify_time=#{cn_note_last_modify_time} 
+			WHERE cn_note_id=#{cn_note_id}
+	</update> 
+	
+	<!-- 指定插入语句 -->
+	<!-- insert和update语句不能指定resultType属性，否则报错 -->
+	<insert id="addNote" parameterType="cn.tedu.cloud_note.entity.Note">
+		INSERT
+		        INTO cn_note(
+		                cn_note_id,
+		                cn_notebook_id,
+		                cn_user_id,
+		                cn_note_status_id,
+		                cn_note_type_id,
+		                cn_note_title,
+		                cn_note_body,
+		                cn_note_create_time,
+		                cn_note_last_modify_time
+		        )
+		        VALUES(
+		                #{cn_note_id},
+		                #{cn_notebook_id},
+		                #{cn_user_id},
+		                #{cn_note_status_id},
+		                #{cn_note_type_id},
+		                #{cn_note_title},
+		                #{cn_note_body},
+		                #{cn_note_create_time},
+		                #{cn_note_last_modify_time}
+		        )
+	</insert>
+
+</mapper>

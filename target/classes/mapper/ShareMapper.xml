@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Configuration 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" >
+
+<!-- namespace属性：用于指定命名空间，防止重复，这里随意指定即可 -->
+<mapper namespace="cn.tedu.cloud_note.dao.ShareDao">
+
+	<!-- 属性id要求唯一，且与接口类中的方法名一致，这里的接口是"cn.tedu.cloud_note.dao.ShareDao" -->
+	<!-- 属性parameterType指定参数的类型 -->
+	<!-- 属性resultType指定结果类型 -->
+	<!-- #{xxx}是mybatis表达式，用于从parameterType属性指定的类中读取成员变量 -->
+
+	<!-- 指定插入语句 -->
+	<!-- insert和update语句不能指定resultType属性，否则报错 -->
+	<insert id="shareNote" parameterType="cn.tedu.cloud_note.entity.Share">
+		INSERT 
+		        INTO cn_share(
+                                cn_share_id,
+                                cn_share_title,
+                                cn_share_body,
+                                cn_note_id)
+		        VALUES(
+                                #{cn_share_id},
+                                #{cn_share_title},
+                                #{cn_share_body},
+                                #{cn_note_id})
+	</insert>
+	
+	<!-- 指定搜索语句 -->
+	<select id="findLikeTitle" parameterType="cn.tedu.cloud_note.dao.SelectLimit" resultType="cn.tedu.cloud_note.entity.Share">
+		SELECT * FROM cn_share WHERE cn_share_title LIKE #{keyword} LIMIT #{offset},#{rows}
+	</select>
+	
+	<!-- 指定搜索语句 -->
+	<select id="findLikeTitleMap" parameterType="Map" resultType="cn.tedu.cloud_note.entity.Share">
+		SELECT * FROM cn_share WHERE cn_share_title LIKE #{keyword} LIMIT #{offset},#{rows}
+	</select>
+
+</mapper>

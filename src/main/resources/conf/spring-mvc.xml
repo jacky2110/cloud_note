@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/cache
+		http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+	
+	
+	<!-- 创建一个properties元素，用于读取properties文件的内容 -->
+	<!-- ■ 属性"classpath:"表示按照类路径进行搜索，以"src/main/resources"为根目录 -->
+	<!-- 例如配置文件为"src/main/resources/config.properties"，则只写"config.properties"即可 -->
+	<!-- spring容器会读取该文件的内容到当前properties元素，然后在Java代码中使用getBean方法和 -->
+	<!-- 和properties元素的id，即可获取到该元素 -->
+	<util:properties id="id_Config" location="classpath:conf/db.properties"/>
+
+	<!-- 配置连接池 -->
+	<!-- 由于上面创建了properties元素，因此这里就可以使用spring表达式读取其中的内容 -->
+	<bean id="id_DataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="username" value="#{id_Config.username}"></property>
+		<property name="password" value="#{id_Config.password}"></property>
+		<property name="driverClassName" value="#{id_Config.driver}"></property>
+		<property name="url" value="#{id_Config.url}"></property>
+	</bean>
+
+	<!-- 在spring配置文件中，通过SqlSessionFactoryBean类配置mybatis -->
+	<!-- 主要包括【连接池的配置】和【映射文件的位置】 -->
+	<bean id="id_Ssfb" class="org.mybatis.spring.SqlSessionFactoryBean">	
+		<!-- 注入连接池，集成到spring后，不再使用mybatis自带的连接池，而是使用spring管理的连接池 -->
+		<!-- name="dataSource"表示这里是在设置连接池 -->
+		<!-- ref属性用于指定通过id来指定要引用的是哪个dbcp连接池实例 -->
+		<property name="dataSource" ref="id_DataSource"/>
+		
+		<!-- 指定映射文件的位置 -->
+		<!-- name="mapperLocations"表示这里是在指定映射文件的位置 -->
+		<!-- value属性用于指定映射文件。注：可以使用通配符指定多个文件 -->
+		<property name="mapperLocations" value="classpath:mapper/*.xml"/>
+	</bean>
+
+	<!-- 配置Mapper映射器 -->
+	<!-- MapperScannerConfigurer负责扫描指定包下面的所有的Mapper映射器，然后生成符合这些映射器要求的对象 -->
+	<!-- （其实就是调用SqlSession的getMapper方法）。另外，还会将这些对象添加到spring容器里面，且默认的 -->
+	<!-- id为接口名称的首字母小写，也可以再定义接口时使用@Repository("someId")类指定一个id。 -->
+	<!-- 而且MapperScannerConfigurer会自动进行组件扫描，因此集成了mybatis后就不用再单独为了进行组件扫描 -->
+	<!-- 而创建context:component-scan元素 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 注入basePackage，用于指定Mapper映射器所在的包，在这个包及其所有子包下面的Mapper映射器都会被搜到， -->
+		<!-- 能搜到多少个Mapper映射器，就会注册多少个MapperFactoryBean对象，多个包之间可以使用逗号或者分号进行分隔 -->
+		<!-- ■ 属性value用于指定Mapper映射器所在的包的名称 -->
+		<property name="basePackage" value="cn.tedu.cloud_note.dao"/>
+	</bean>
+
+	<!-- 配置组件扫描 -->
+	<!-- ■ 属性base-package：指定要扫描的包的名称，如果有多个包则可以用逗号隔开，spring容器则会扫描该包及其子包中的所有的类， -->
+	<!-- 遇到某个类前有特殊注解的（例如：@Component @Repository @Service @Controller），则会将该类纳入到容器进行管理，就像之前手动 -->
+	<!-- 创建bean元素一样，只不过这里是自动完成的 -->
+	<context:component-scan base-package="cn.tedu.cloud_note"></context:component-scan>
+	
+	<!-- 启动MVC注解扫描 -->
+	<!-- 如果不配置，则类似于"@RequestMapping"等注释将无法生效 -->
+	<mvc:annotation-driven/>
+
+</beans>

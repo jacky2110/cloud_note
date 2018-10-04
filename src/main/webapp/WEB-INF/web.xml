@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>springmvc-json</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+	<!-- 添加对springMVC中DispatcherServlet类的配置 -->
+	
+	<!-- 1. 声明Servlet的类型，并给它取一个别名（小名） -->
+	<servlet>
+		<!-- 为类名取一个别名，目的是为了以后引用起来方便 -->
+		<servlet-name>springmvc</servlet-name>
+		<!-- 指定要使用的类-->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 在这里增加一个参数，注意：参数写在这里表示只是给该类使用的 -->
+		<init-param>
+			<!-- 下面一个参数名和一个参数值，用于向spring指明其配置文件的位置 -->
+			<!-- 使用spring-*.xml可以指定多个配置文件，每个文件负责不同的配置，条理更清晰 -->
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:conf/spring-*.xml</param-value>
+		</init-param>
+		<!-- 添加下句后，Tomcat一旦启动就会立即创建Servlet类对象，里面的数字1的用途是： -->
+		<!-- 在有多个Servlet类时，当前Servlet类(web.HiServlet)排在第几位被加载 -->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!-- 2. 通过别名应用Servlet，并给它取一个网名（访问路径） -->
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<!-- 使用后缀的匹配方式指定网名，"*.form"这个后缀是spring官方的建议，当然也可以使用别的网址 -->
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+</web-app>
